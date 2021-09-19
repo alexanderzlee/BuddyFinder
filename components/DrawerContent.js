@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import {
     useTheme,
@@ -13,10 +13,39 @@ import {
     DrawerItem
 } from '@react-navigation/drawer';
 import { logout } from '../src/FirebaseAuth';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { auth, db } from '../src/FirebaseAuth';
+import UserAvatar from 'react-native-user-avatar'
+import {Linking} from 'react-native'
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export function DrawerContent(props) {
+
+    const [name, setName] = useState("");
+    const [number, setNumber] = useState("");
+    const [user, loading, error] = useAuthState(auth);
+    const getDisplayName = async () => {    
+        try {
+            const query = await db
+                .collection("users")
+                .where("uid", "==", user?.uid)
+                .get();
+            const data = await query.docs[0].data();
+            setName(data.name);
+            setNumber(data.phone);
+        } catch (err) {
+            console.error(err);
+            alert("An error occured while fetching user data");
+        }
+    }
+
+    useEffect(() => {
+        if (loading) {
+            return;
+        }
+        getDisplayName();
+    }, [user, loading]);
 
     return(
         <View style={{flex:1}}>
@@ -24,15 +53,10 @@ export function DrawerContent(props) {
                 <View style={styles.drawerContent}>
                     <View style={styles.userInfoSection}>
                         <View style={{flexDirection:'row',marginTop: 15}}>
-                            <Avatar.Image 
-                                source={{
-                                    uri: 'https://api.adorable.io/avatars/50/abott@adorable.png'
-                                }}
-                                size={50}
-                            />
+                            <UserAvatar size={50} name={name} style={styles.userAvatar} />  
                             <View style={{marginLeft:15, flexDirection:'column'}}>
-                                <Title style={styles.title}>John Doe</Title>
-                                <Caption style={styles.caption}>@j_doe</Caption>
+                                <Title style={styles.title}>{name}</Title>
+                                <Caption style={styles.caption}>+{number}</Caption>
                             </View>
                         </View>
                     </View>
@@ -63,18 +87,7 @@ export function DrawerContent(props) {
                         <DrawerItem 
                             icon={({color, size}) => (
                                 <Icon 
-                                name="account-outline" 
-                                color={color}
-                                size={size}
-                                />
-                            )}
-                            label="Profile"
-                            onPress={() => {props.navigation.navigate('Profile')}}
-                        />
-                        <DrawerItem 
-                            icon={({color, size}) => (
-                                <Icon 
-                                name="account-outline" 
+                                name="human-greeting" 
                                 color={color}
                                 size={size}
                                 />
@@ -85,6 +98,19 @@ export function DrawerContent(props) {
                     </Drawer.Section>
                 </View>
             </DrawerContentScrollView>
+            <Drawer.Section style={styles.bottomDrawerSection}>
+                <DrawerItem 
+                    icon={({color, size}) => (
+                        <Icon 
+                        name="robot" 
+                        color={color}
+                        size={size}
+                        />
+                    )}
+                    label="Call Bot"
+                    onPress={() => {logout()}}
+                />
+            </Drawer.Section>
             <Drawer.Section style={styles.bottomDrawerSection}>
                 <DrawerItem 
                     icon={({color, size}) => (
@@ -106,6 +132,15 @@ const styles = StyleSheet.create({
     drawerContent: {
       flex: 1,
     },
+
+    userAvatar: {
+        height: 50,
+        width: 50,
+        borderRadius: 100,
+        marginRight: 30,
+    },
+
+
     userInfoSection: {
       paddingLeft: 20,
     },
@@ -132,8 +167,8 @@ const styles = StyleSheet.create({
       marginTop: 15,
     },
     bottomDrawerSection: {
-        marginBottom: 15,
-        borderTopColor: '#f4f4f4',
-        borderTopWidth: 1
+      marginBottom: 15,
+      borderTopColor: '#f4f4f4',
+      borderTopWidth: 1
     },
   });

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import {Linking} from 'react-native'
 import { StyleSheet, Text, View, Dimensions, Button, TouchableOpacity } from 'react-native';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, db } from '../src/FirebaseAuth';
@@ -64,7 +65,7 @@ export default function DashboardScreen({ navigation }) { // (pass the `navigati
                 <Text>{"   "}</Text>
                 <TouchableOpacity
                     style={styles.redbutton}
-                    onPress={() => navigation.navigate("Emergency")}
+                    onPress={() => {Linking.openURL('tel:911');}}
                 >
                     <Text style={styles.spacing}> </Text>
                     <Text style={styles.emergency}>EMERGENCY</Text>
@@ -94,8 +95,8 @@ const styles = StyleSheet.create({
     },
 
     userAvatar: {
-        height: 50,
-        width: 50,
+        height: 75,
+        width: 75,
         borderRadius: 100,
         marginRight: 30,
     },
@@ -173,8 +174,8 @@ const styles = StyleSheet.create({
     map: {
         marginTop: 5,
         marginBottom: 5,
-        padding: 150,
         borderRadius: 25,
+        padding: 140,
         width: Dimensions.get('window').width - 80,
         height: Dimensions.get('window').height - 400,
     },

@@ -9,7 +9,6 @@ import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
 import DashboardScreen from './screens/DashboardScreen';
 import ConnectionsScreen from './screens/ConnectionsScreen';
-import ProfileScreen from './screens/ProfileScreen';
 import FindBuddyScreen from './screens/FindBuddyScreen';
 
 
@@ -63,7 +62,6 @@ export default function App() {
             initialRouteName={"Dashboard"}>
             <Drawer.Screen name="Dashboard" component={DashboardScreen} />
             <Drawer.Screen name="Connections" component={ConnectionsScreen} />
-            <Drawer.Screen name="Profile" component={ProfileScreen} />
             <Drawer.Screen name="FindBuddy" component={FindBuddyScreen} />
           </Drawer.Navigator>
         </NavigationContainer>
