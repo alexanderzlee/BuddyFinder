@@ -1,19 +1,27 @@
 import { StatusBar } from 'expo-status-bar';
-import * as React from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Button, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import WelcomeGraphic from '../components/WelcomeGraphic';
 
 export default function HomeScreen({ navigation }) {
+
   return (
     <View style={styles.container}>
-      <Text style={styles.welcomeText}>Welcome to</Text>
-      <Text style={styles.titleText}>Buddy Finder</Text>
-      <Button
-        title="Login"
+      <WelcomeGraphic />
+      <Text>{"\n\n\n\n\n\n\n\n\n"}</Text>
+      <TouchableOpacity
+        style={styles.greenbutton}
         onPress={() => navigation.navigate('Login')}
-      />
-      <Button
-        title="Register"
-        onPress={() => navigation.navigate('Register')} />
+      >
+        <Text style={styles.whiteText}>Log In</Text>
+      </TouchableOpacity>
+      <Text style={styles.spacing}> {"\n\n"} </Text>
+      <TouchableOpacity
+        style={styles.yellowbutton}
+        onPress={() => navigation.navigate('Register')}
+      >
+        <Text style={styles.whiteText}>Sign Up</Text>
+      </TouchableOpacity>
       <StatusBar style="auto" />
     </View >
   );
@@ -26,13 +34,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-
-  welcomeText: {
+  whiteText: {
     fontSize: 30,
+    color: "#f2eeeb",
   },
 
-  titleText: {
-    fontSize: 60,
-    fontWeight: "bold"
+  spacing: {
+    fontSize: 5
+  },
+
+  greenbutton: {
+    borderRadius: 25,
+    backgroundColor: "#025940",
+    paddingHorizontal: 139,
+    padding: 20
+  },
+
+  yellowbutton: {
+    borderRadius: 25,
+    backgroundColor: "#f2b705",
+    paddingHorizontal: 125,
+    padding: 20
   },
 });
