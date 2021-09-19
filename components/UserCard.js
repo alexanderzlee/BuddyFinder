@@ -3,6 +3,7 @@ import { Text, View, StyleSheet, Button, TouchableOpacity } from 'react-native';
 import UserAvatar from 'react-native-user-avatar'
 import { requestBuddy, acceptBuddy } from '../src/FirebaseUser';
 import firebase from 'firebase';
+import {Linking} from 'react-native';
 
 // user: The document of the User for the user card
 // type of button that should be shown ("request", "accept", "pending")
@@ -28,6 +29,13 @@ export default function UserCard({ user, prompt }) {
         </TouchableOpacity>
         : prompt === "pending" ?
         <Text style={styles.pending}>Pending...</Text>
+        : prompt === "buddies" ?
+        <TouchableOpacity
+          style={styles.requestButton}
+          onPress={() => {Linking.openURL("tel:".concat("",user.phone));}}>
+          <Text style={styles.request}>Call</Text>
+        </TouchableOpacity>
+        // <Text>+{user.phoneNumber}</Text>
         : <Text> </Text>
       }
     </View>}

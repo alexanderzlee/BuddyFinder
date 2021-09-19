@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import {Linking} from 'react-native'
+import {Linking} from 'react-native';
 import { StyleSheet, Text, View, Dimensions, Button, TouchableOpacity } from 'react-native';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, db } from '../src/FirebaseAuth';
 import MapView from 'react-native-maps';
 import useLocation from '../hooks/useLocation';
 import UserAvatar from 'react-native-user-avatar'
+import { finishWalk } from '../src/FirebaseUser';
 
 export default function DashboardScreen({ navigation }) { // (pass the `navigation` prop to every screen component)
     const [name, setName] = useState("");
@@ -42,13 +43,23 @@ export default function DashboardScreen({ navigation }) { // (pass the `navigati
                     </Text>
                 </Text>
             </View>
-            <TouchableOpacity
-                style={styles.greenbutton}
-                onPress={() => navigation.navigate("FindBuddy")}
-            >
-                <Text style={styles.bigFind}>FIND</Text>
-                <Text style={styles.whiteText}>a Buddy</Text>
-            </TouchableOpacity>
+            <View style={styles.topbuttons}>
+                <TouchableOpacity
+                    style={styles.greenbutton}
+                    onPress={() => navigation.navigate("FindBuddy")}
+                >
+                    <Text style={styles.bigFind}>FIND</Text>
+                    <Text style={styles.whiteText}>a Buddy</Text>
+                </TouchableOpacity>
+                <Text>  </Text>
+                <TouchableOpacity
+                    style={styles.greenbutton}
+                    onPress={() => finishWalk(user)}
+                >
+                    <Text style={styles.whiteText}>Made it</Text>
+                    <Text style={styles.bigFind}>HOME</Text>
+                </TouchableOpacity>
+            </View>
             <MapView style={styles.map}
                 showsUserLocation={true}
                 followsUserLocation={true}
@@ -85,6 +96,12 @@ const styles = StyleSheet.create({
     bigName: {
         fontSize: 30,
         fontWeight: "800",
+    },
+
+    topbuttons: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
     },
 
     userCard: {
@@ -130,7 +147,7 @@ const styles = StyleSheet.create({
     greenbutton: {
         borderRadius: 10,
         backgroundColor: "#025940",
-        paddingHorizontal: 130,
+        paddingHorizontal: 40,
         padding: 10,
     },
 

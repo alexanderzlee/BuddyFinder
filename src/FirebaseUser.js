@@ -41,14 +41,42 @@ const acceptBuddy = async (accepterID, requesterID) => {
     // add requester to accepter's buddies list
     buddies: firebase.firestore.FieldValue.arrayUnion(requesterID),
   });
+  // flag requester as walking home
+  requesterRef.update({
+    walkingHome: true,
+  });
   // add accepter to requester's buddy list
   requesterRef.update({
     buddies: firebase.firestore.FieldValue.arrayUnion(accepterID),
   });
 };
 
+const finishWalk = async (user) => {
+  const userUID = user.uid;
+  const userRef = await getUserDocumentRef(userUID);
+  const userBuddies = (await userRef.get()).data()["buddies"];
+  // flag user as finished walking home
+  userRef.update({
+    walkingHome: false,
+  });
+  // remove user from the buddies currently watching them
+  userBuddies.forEach(async (buddyUID) => {
+    const buddyRef = await getUserDocumentRef(buddyUID);
+    buddyRef.update({
+      buddies: firebase.firestore.FieldValue.arrayRemove(userUID),
+      requestingBuddies: firebase.firestore.FieldValue.arrayRemove(userUID),
+    });
+  });
+  userRef.update({
+    buddies: [],
+  });
+
+}
+
 
 export {
   requestBuddy,
   acceptBuddy,
+  finishWalk,
+  getUserDocumentRef,
 }

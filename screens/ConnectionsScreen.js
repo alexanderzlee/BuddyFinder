@@ -15,14 +15,22 @@ export default function ConnectionsScreen() {
   const currentUserDoc = Object.values(users)
     .find((user) => currentUser.uid === user["uid"])
   const requestingBuddiesUIDs = currentUserDoc["requestingBuddies"] || [];
-  const buddyDocs = currentUserDoc["buddies"] || [];
+  const buddyUIDs = currentUserDoc["buddies"] || [];
 
   // filter users by users who requested to be a buddy
   const requestingBuddiesDocs = Object.entries(users)
-    .filter(([id, requestingBuddyDoc]) => requestingBuddiesUIDs.includes(requestingBuddyDoc.uid)
-    )
+    .filter(([id, requestingBuddyDoc]) => requestingBuddiesUIDs.includes(requestingBuddyDoc.uid))
     // flatten 2D array to 1D array (omit ID so only UID's are left)
-    .map(([id, requestingBuddyDoc]) => requestingBuddyDoc)
+    .map(([id, requestingBuddyDoc]) => {
+      const ret = requestingBuddyDoc
+      ret.requesting = true;
+      return ret;
+    });
+  // filter users by users who are buddies
+  const buddyDocs = Object.entries(users)
+    .filter(([id, buddyDoc]) => buddyUIDs.includes(buddyDoc.uid))
+    .map(([id, buddyDoc]) => buddyDoc);
+
 
   const connections = [
     {
@@ -34,14 +42,14 @@ export default function ConnectionsScreen() {
       data: requestingBuddiesDocs,
     }
   ]
+
   return (
     <>
       <SectionList
         sections={connections}
         keyExtractor={(item, index) => item + index}
-        renderItem={({ item, section }) => {console.log("renderItem:", item); 
-          return <UserCard user={item} prompt={section === "Requesting" ? "accept" : null}
-        />}}
+        renderItem={({ item }) => <UserCard user={item} prompt={item.requesting ? "accept" : "buddies"}
+        />}
         renderSectionHeader={({ section: { title } }) => (
           <Text style={styles.header}>{title}</Text>
         )}
